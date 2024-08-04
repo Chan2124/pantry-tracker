@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Box, Stack, Typography, Button, Modal, TextField, Container, AppBar, Toolbar, IconButton } from '@mui/material';
-import { Add as AddIcon, Remove as RemoveIcon } from '@mui/icons-material';
+import { Add as AddIcon, Remove as RemoveIcon, Search as SearchIcon } from '@mui/icons-material';
 import { firestore } from '@/firebase';
 import {
   collection,
@@ -33,6 +33,8 @@ export default function Home() {
   const [inventory, setInventory] = useState([]);
   const [open, setOpen] = useState(false);
   const [itemName, setItemName] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredInventory, setFilteredInventory] = useState([]);
 
   const updateInventory = async () => {
     const snapshot = query(collection(firestore, 'inventory'));
@@ -42,6 +44,7 @@ export default function Home() {
       inventoryList.push({ name: doc.id, ...doc.data() });
     });
     setInventory(inventoryList);
+    setFilteredInventory(inventoryList);
   };
 
   const addItem = async (item) => {
@@ -73,6 +76,13 @@ export default function Home() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  const handleSearch = () => {
+    const filtered = inventory.filter(item =>
+      item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredInventory(filtered);
+  };
+
   useEffect(() => {
     updateInventory();
   }, []);
@@ -89,6 +99,23 @@ export default function Home() {
           </Button>
         </Toolbar>
       </AppBar>
+      <Box display="flex" mb={2} alignItems="center" gap={2}>
+        <TextField
+          id="search-field"
+          label="Search"
+          variant="outlined"
+          fullWidth
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <Button
+          variant="contained"
+          startIcon={<SearchIcon />}
+          onClick={handleSearch}
+        >
+          Search
+        </Button>
+      </Box>
       <Modal
         open={open}
         onClose={handleClose}
@@ -137,7 +164,7 @@ export default function Home() {
           </Typography>
         </Box>
         <Stack spacing={2} mt={2} maxHeight="300px" overflow="auto">
-          {inventory.map(({ name, quantity }) => (
+          {filteredInventory.map(({ name, quantity }) => (
             <Box
               key={name}
               width="100%"
