@@ -92,7 +92,7 @@ export default function Home() {
       <AppBar position="static" sx={{ mb: 4 }}>
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Inventory Tracker
+            Pantry Tracker
           </Typography>
           <Button color="inherit" onClick={handleOpen} startIcon={<AddIcon />}>
             Add New Item
@@ -160,7 +160,7 @@ export default function Home() {
           alignItems="center"
         >
           <Typography variant="h4" component="div">
-            Inventory Items
+            Pantry Items
           </Typography>
         </Box>
         <Stack spacing={2} mt={2} maxHeight="300px" overflow="auto">
